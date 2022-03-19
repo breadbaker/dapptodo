@@ -5,31 +5,49 @@ import TodoItem from 'components/TodoItem'
 import NewTodo from 'components/NewTodo'
 // import TodoListJSON from 'build/TodoList'
 import Contract  from '@truffle/contract'
+import { set } from 'react-hook-form'
 
 // import NetworkCard from '../components/connectors/NetworkCard'
 // import PriorityExample from '../components/connectors/PriorityExample'
 // import WalletConnectCard from '../components/connectors/WalletConnectCard'
 
 export default function Home() {
+  const [TodoList, setTodoList] = useState()
+  const [todosCount, setTodosCount]  = useState(-1)
+  const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const onConnect = async (provider, isActive) => {
-    console.log('loaded up')
-    console.log(provider)
-    console.log(isActive)
+    if (loading) {
+      return
+    } else {
+      setLoading(true)
+    }
     const res = await fetch(`/contracts/TodoList.json`)
     const contract = await res.json()
     const TodoContract = Contract(contract)
     TodoContract.setProvider(provider.provider)
-    console.log(TodoContract)
-    console.log('hello')
+    TodoContract.setNetwork(provider.provider.network)
+    const network  = await TodoContract.detectNetwork()
+    console.log('network', network)
     try {
-      TodoContract.deployed()
+      const list = await TodoContract.deployed()
+      const count = await list.taskCount()
+      const todoItems = []
+      for (var i = 1; i <= count; i++) {
+        // Fetch the task data from the blockchain
+        const task = await list.tasks(i)
+        console.log('task',task)
+        todoItems.push(task)
+      }
+      setTodos(todoItems)
+      setTodoList(list)
+      setTodosCount(count)
     } catch (err) {
       console.log(err)
     }
   }
 
-  const [todos, setTodos] = useState([])
   // const [newTodo, setNewTodo] = useState({})
   return (
     <>
@@ -39,16 +57,25 @@ export default function Home() {
         {/* <WalletConnectCard /> */}
         {/* <CoinbaseWalletCard /> */}
         {/* <NetworkCard /> */}
-        <NewTodo addTodo={(name) => {
-            setTodos(todos.concat(
-              [{
-                name,
-                completed: false,
-                id: todos.length + 1
-              }]
-            ))
-          }}
-        />
+        {TodoList && 
+        
+          <div>
+            <h2>{`Total Todos: ${todosCount}`}</h2>
+            <NewTodo addTodo={(name) => {
+              TodoList.createTask(name)
+              // setTodos(todos.concat(
+              //   [{
+              //     name,
+              //     completed: false,
+              //     id: todos.length + 1
+              //   }]
+              // ))
+            }}
+          /> 
+          </div>
+        }
+
+
         
         {todos.map(todo => {
           return (

@@ -133,10 +133,21 @@ export const CHAINS = {
     // nativeCurrency: MATIC,
     blockExplorerUrls: ['https://mumbai.polygonscan.com'],
   },
+  1337: {
+    urls: ['127.0.0.1:8545'],
+    name: 'ganache working'
+  },
+  5777: {
+    urls: ['127.0.0.1:8545'],
+    name: 'ganache'
+  }
 }
 
 export const URLS = Object.keys(CHAINS).reduce(
   (accumulator, chainId) => {
+    console.log(accumulator)
+    console.log(chainId)
+    console.log(Number(chainId))
     const validURLs = CHAINS[Number(chainId)].urls
 
     if (validURLs.length) {

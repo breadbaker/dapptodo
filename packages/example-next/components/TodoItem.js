@@ -13,10 +13,10 @@ const DescWrapper = styled.div`
 `;
 
 
-export default function TodoItem({ completed, name, id, completeTask }) {
+export default function TodoItem({ completed, content, id, completeTask }) {
     return (
       <div>
-        <p>{name}</p>
+        <p>{content}</p>
         <Status isActive={completed} isActivating={!completed} />
         {/* <p>{id}</p> */}
         { !completed && <button onClick={() => {
