@@ -1,10 +1,9 @@
 import { useEffect } from 'react'
-import { hooks, metaMask } from '../../connectors/metaMask'
-import { Accounts } from '../Accounts'
-import { Card } from '../Card'
-import { Chain } from '../Chain'
-import { ConnectWithSelect } from '../ConnectWithSelect'
-import { Status } from '../Status'
+import { hooks, metaMask } from 'connectors/metaMask'
+import { Accounts } from 'components/Accounts'
+import { Chain } from 'components/Chain'
+import { ConnectWithSelect } from 'components/ConnectWithSelect'
+import { Status } from 'components/Status'
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -25,7 +24,7 @@ export default function MetaMaskCard() {
   }, [])
 
   return (
-    <Card>
+    <div>
       <div>
         <b>MetaMask</b>
         <Status isActivating={isActivating} error={error} isActive={isActive} />
@@ -41,6 +40,6 @@ export default function MetaMaskCard() {
         error={error}
         isActive={isActive}
       />
-    </Card>
+    </div>
   )
 }

@@ -1,34 +1,35 @@
-import type { AddEthereumChainParameter } from '@web3-react/types'
+import { AddEthereumChainParameter } from '@web3-react/types'
 
-const ETH: AddEthereumChainParameter['nativeCurrency'] = {
-  name: 'Ether',
-  symbol: 'ETH',
-  decimals: 18,
-}
+// const ETH: AddEthereumChainParameter['nativeCurrency'] = {
+//   name: 'Ether',
+//   symbol: 'ETH',
+//   decimals: 18,
+// }
 
-const MATIC: AddEthereumChainParameter['nativeCurrency'] = {
-  name: 'Matic',
-  symbol: 'MATIC',
-  decimals: 18,
-}
+// const MATIC: AddEthereumChainParameter['nativeCurrency'] = {
+//   name: 'Matic',
+//   symbol: 'MATIC',
+//   decimals: 18,
+// }
 
-interface BasicChainInformation {
-  urls: string[]
-  name: string
-}
+// interface {
+//   urls: string[]
+//   name: string
+// }
 
-interface ExtendedChainInformation extends BasicChainInformation {
-  nativeCurrency: AddEthereumChainParameter['nativeCurrency']
-  blockExplorerUrls: AddEthereumChainParameter['blockExplorerUrls']
-}
+// interface ExtendedChainInformation extends BasicChainInformation {
+//   nativeCurrency: AddEthereumChainParameter['nativeCurrency']
+//   blockExplorerUrls: AddEthereumChainParameter['blockExplorerUrls']
+// }
+
 
 function isExtendedChainInformation(
-  chainInformation: BasicChainInformation | ExtendedChainInformation
-): chainInformation is ExtendedChainInformation {
-  return !!(chainInformation as ExtendedChainInformation).nativeCurrency
+  chainInformation
+){
+  return !!(chainInformation).nativeCurrency
 }
 
-export function getAddChainParameters(chainId: number): AddEthereumChainParameter | number {
+export function getAddChainParameters(chainId) {
   const chainInformation = CHAINS[chainId]
   if (isExtendedChainInformation(chainInformation)) {
     return {
@@ -43,7 +44,7 @@ export function getAddChainParameters(chainId: number): AddEthereumChainParamete
   }
 }
 
-export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainInformation } = {
+export const CHAINS = {
   1: {
     urls: [
       process.env.infuraKey ? `https://mainnet.infura.io/v3/${process.env.infuraKey}` : undefined,
@@ -83,7 +84,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://mainnet.optimism.io',
     ].filter((url) => url !== undefined),
     name: 'Optimism',
-    nativeCurrency: ETH,
+    // nativeCurrency: ETH,
     blockExplorerUrls: ['https://optimistic.etherscan.io'],
   },
   69: {
@@ -92,7 +93,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://kovan.optimism.io',
     ].filter((url) => url !== undefined),
     name: 'Optimism Kovan',
-    nativeCurrency: ETH,
+    // nativeCurrency: ETH,
     blockExplorerUrls: ['https://kovan-optimistic.etherscan.io'],
   },
   // Arbitrum
@@ -102,7 +103,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://arb1.arbitrum.io/rpc',
     ].filter((url) => url !== undefined),
     name: 'Arbitrum One',
-    nativeCurrency: ETH,
+    // nativeCurrency: ETH,
     blockExplorerUrls: ['https://arbiscan.io'],
   },
   421611: {
@@ -111,7 +112,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://rinkeby.arbitrum.io/rpc',
     ].filter((url) => url !== undefined),
     name: 'Arbitrum Testnet',
-    nativeCurrency: ETH,
+    // nativeCurrency: ETH,
     blockExplorerUrls: ['https://testnet.arbiscan.io'],
   },
   // Polygon
@@ -121,7 +122,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://polygon-rpc.com',
     ].filter((url) => url !== undefined),
     name: 'Polygon Mainnet',
-    nativeCurrency: MATIC,
+    // nativeCurrency: MATIC,
     blockExplorerUrls: ['https://polygonscan.com'],
   },
   80001: {
@@ -129,14 +130,14 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       (url) => url !== undefined
     ),
     name: 'Polygon Mumbai',
-    nativeCurrency: MATIC,
+    // nativeCurrency: MATIC,
     blockExplorerUrls: ['https://mumbai.polygonscan.com'],
   },
 }
 
-export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{ [chainId: number]: string[] }>(
+export const URLS = Object.keys(CHAINS).reduce(
   (accumulator, chainId) => {
-    const validURLs: string[] = CHAINS[Number(chainId)].urls
+    const validURLs = CHAINS[Number(chainId)].urls
 
     if (validURLs.length) {
       accumulator[Number(chainId)] = validURLs
