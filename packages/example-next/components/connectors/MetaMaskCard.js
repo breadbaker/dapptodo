@@ -7,7 +7,7 @@ import { Status } from 'components/Status'
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
-export default function MetaMaskCard() {
+export default function MetaMaskCard({ onConnect }) {
   const chainId = useChainId()
   const accounts = useAccounts()
   const error = useError()
@@ -15,7 +15,17 @@ export default function MetaMaskCard() {
 
   const isActive = useIsActive()
 
+  // if (isActive) {
+  //   useEffect(async () => {
+  //     onConnect(useProvider())
+  //   }, []);
+  // }
+
   const provider = useProvider()
+
+  if (provider && isActive) {
+    onConnect(provider, isActive)
+  }
   const ENSNames = useENSNames(provider)
 
   // attempt to connect eagerly on mount
