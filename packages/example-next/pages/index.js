@@ -32,6 +32,23 @@ export default function Home() {
   useEffect(() => {
     void metaMask.connectEagerly()
   }, [])
+
+  const loadData = async (list) => {
+    let List = list || TodoList
+    const count = await List.taskCount()
+    const todoItems = []
+    for (var i = 1; i <= count; i++) {
+      // Fetch the task data from the blockchain
+      const task = await List.tasks(i)
+      console.log('task',task)
+      todoItems.push(task)
+    }
+    // setTimeout(() => {
+      
+      setAccount(accounts[0])
+      setTodos(todoItems)
+      setTodosCount(count)
+  }
   const loadUp = async () => {
     setLoaded(true)
     const res = await fetch(`/contracts/TodoList.json`)
@@ -39,24 +56,13 @@ export default function Home() {
     const TodoContract = Contract(contract)
     TodoContract.setProvider(provider.provider)
     TodoContract.setNetwork(provider.provider.network)
-    const network  = await TodoContract.detectNetwork()
-    console.log('network', network)
+    // const network  = await TodoContract.detectNetwork()
+    // console.log('network', network)
     // try {
       const list = await TodoContract.deployed()
-      const count = await list.taskCount()
-      const todoItems = []
-      for (var i = 1; i <= count; i++) {
-        // Fetch the task data from the blockchain
-        const task = await list.tasks(i)
-        console.log('task',task)
-        todoItems.push(task)
-      }
-      // setTimeout(() => {
-        
-        setAccount(accounts[0])
-        setTodos(todoItems)
-        setTodoList(list)
-        setTodosCount(count)
+      setTodoList(list)
+
+      loadData(list)
       // }, 10);
 
     // } catch (err) {
@@ -73,7 +79,7 @@ export default function Home() {
     <>
       {/* <PriorityExample /> */}
       <div style={{ display: 'flex', flexFlow: 'wrap', fontFamily: 'sans-serif' }}>
-        {/* <MetaMaskCard/> */}
+        <MetaMaskCard/>
         {/* <WalletConnectCard /> */}
         {/* <CoinbaseWalletCard /> */}
         {/* <NetworkCard /> */}
@@ -81,8 +87,9 @@ export default function Home() {
         
           <div>
             <h2>{`Total Todos: ${todosCount}`}</h2>
-            <NewTodo addTodo={(name) => {
-              TodoList.createTask(name, {from: account})
+            <NewTodo addTodo={async (name) => {
+              await TodoList.createTask(name, {from: account})
+              loadData();
               // setTodos(todos.concat(
               //   [{
               //     name,
@@ -101,16 +108,17 @@ export default function Home() {
           return (
             <TodoItem
               key={todo.id}
-              completeTask={(id) => {
-                TodoList.toggleCompleted(id, {from: account})
-                const newTodos = []
-                todos.forEach(todo => {
-                  newTodos.push({
-                    ...todo,
-                    completed: (todo.completed || id == todo.id) ? true : false
-                  })
-                  setTodos(newTodos)
-                })
+              completeTask={async (id) => {
+                await TodoList.toggleCompleted(id, {from: account})
+                loadData()
+                // const newTodos = []
+                // todos.forEach(todo => {
+                //   newTodos.push({
+                //     ...todo,
+                //     completed: (todo.completed || id == todo.id) ? true : false
+                //   })
+                //   setTodos(newTodos)
+                // })
               }
 
               }
