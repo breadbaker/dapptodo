@@ -10,19 +10,30 @@ import { set } from 'react-hook-form'
 // import NetworkCard from '../components/connectors/NetworkCard'
 // import PriorityExample from '../components/connectors/PriorityExample'
 // import WalletConnectCard from '../components/connectors/WalletConnectCard'
+import { hooks, metaMask } from 'connectors/metaMask'
+const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
 export default function Home() {
   const [TodoList, setTodoList] = useState()
   const [todosCount, setTodosCount]  = useState(-1)
   const [todos, setTodos] = useState([])
   const [loading, setLoading] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [account, setAccount] = useState()
 
-  const onConnect = async (provider, isActive) => {
-    if (loading) {
-      return
-    } else {
-      setLoading(true)
-    }
+  const chainId = useChainId()
+  const accounts = useAccounts()
+  const error = useError()
+  const isActivating = useIsActivating()
+  const isActive = useIsActive()
+  const provider = useProvider()
+  const ENSNames = useENSNames(provider)
+
+  useEffect(() => {
+    void metaMask.connectEagerly()
+  }, [])
+  const loadUp = async () => {
+    setLoaded(true)
     const res = await fetch(`/contracts/TodoList.json`)
     const contract = await res.json()
     const TodoContract = Contract(contract)
@@ -30,7 +41,7 @@ export default function Home() {
     TodoContract.setNetwork(provider.provider.network)
     const network  = await TodoContract.detectNetwork()
     console.log('network', network)
-    try {
+    // try {
       const list = await TodoContract.deployed()
       const count = await list.taskCount()
       const todoItems = []
@@ -40,12 +51,21 @@ export default function Home() {
         console.log('task',task)
         todoItems.push(task)
       }
-      setTodos(todoItems)
-      setTodoList(list)
-      setTodosCount(count)
-    } catch (err) {
-      console.log(err)
-    }
+      // setTimeout(() => {
+        
+        setAccount(accounts[0])
+        setTodos(todoItems)
+        setTodoList(list)
+        setTodosCount(count)
+      // }, 10);
+
+    // } catch (err) {
+    //   console.log(err)
+    // }
+  }
+  // const onConnect = async (provider, isActive, accounts) => {
+  if (isActive && provider && !loaded ) {
+    loadUp()
   }
 
   // const [newTodo, setNewTodo] = useState({})
@@ -53,7 +73,7 @@ export default function Home() {
     <>
       {/* <PriorityExample /> */}
       <div style={{ display: 'flex', flexFlow: 'wrap', fontFamily: 'sans-serif' }}>
-        <MetaMaskCard onConnect={onConnect} />
+        {/* <MetaMaskCard/> */}
         {/* <WalletConnectCard /> */}
         {/* <CoinbaseWalletCard /> */}
         {/* <NetworkCard /> */}
@@ -62,7 +82,7 @@ export default function Home() {
           <div>
             <h2>{`Total Todos: ${todosCount}`}</h2>
             <NewTodo addTodo={(name) => {
-              TodoList.createTask(name)
+              TodoList.createTask(name, {from: account})
               // setTodos(todos.concat(
               //   [{
               //     name,
@@ -82,6 +102,7 @@ export default function Home() {
             <TodoItem
               key={todo.id}
               completeTask={(id) => {
+                TodoList.toggleCompleted(id, {from: account})
                 const newTodos = []
                 todos.forEach(todo => {
                   newTodos.push({

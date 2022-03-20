@@ -23,9 +23,6 @@ export default function MetaMaskCard({ onConnect }) {
 
   const provider = useProvider()
 
-  if (provider && isActive) {
-    onConnect(provider, isActive)
-  }
   const ENSNames = useENSNames(provider)
 
   // attempt to connect eagerly on mount
