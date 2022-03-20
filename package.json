@@ -1,9 +1,11 @@
 {
   "private": true,
-  "name": "example-next",
+  "name": "example-next",	
   "scripts": {
-    "start": "next dev"
-  },
+		"dev": "next -p 3001",
+		"start": "next -p 3001",
+		"serve": "next start -p 3001"
+	},
   "dependencies": {
     "@ethersproject/bignumber": "^5.6.0",
     "@ethersproject/experimental": "^5.6.0",
