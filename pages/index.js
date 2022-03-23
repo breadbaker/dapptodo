@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-// import MetaMaskCard from 'components/connectors/MetaMaskCard'
+import MetaMaskCard from 'components/connectors/MetaMaskCard'
 import TodoList from 'components/TodoList'
 
 import { hooks, metaMask } from 'connectors/metaMask'
@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <div style={{ display: 'flex', flexFlow: 'wrap', fontFamily: 'sans-serif' }}>
-        {/* <MetaMaskCard/> */}
+        <MetaMaskCard/>
         {isActive &&
           <TodoList account={accounts[0]} provider={provider} />
         }

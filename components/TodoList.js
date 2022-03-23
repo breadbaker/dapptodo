@@ -40,10 +40,25 @@ export default function TodoList({ account, provider }) {
         const TodoContract = Contract(contract)
         TodoContract.setProvider(provider.provider)
         TodoContract.setNetwork(provider.provider.network)
-        const list = await TodoContract.deployed()
-        setTodoListContract(list)
+        try {
+            const list = await TodoContract.deployed()
+            setTodoListContract(list)
     
-        loadData(list)
+            loadData(list)
+        } catch (err) {
+            console.log('layer 1',err)
+            try {
+                const list = await TodoContract.deploy()
+                setTodoListContract(list)
+    
+                loadData(list)
+            }
+            catch (err) {
+                console.log('layer 2',err)
+            }
+
+        }
+
       }, []
     )
     
