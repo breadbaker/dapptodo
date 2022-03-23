@@ -3,7 +3,8 @@
   "name": "example-next",	
   "scripts": {
 		"start": "next -p 3001",
-		"dev": "next dev"
+		"dev": "next dev",
+    "serve": "next start -p 3001"
 	},
   "dependencies": {
     "@ethersproject/bignumber": "^5.6.0",
