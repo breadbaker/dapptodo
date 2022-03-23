@@ -18,10 +18,10 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 //
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const fs = require('fs');
+const secret = JSON.parse(fs.readFileSync(".secret.json").toString());
 
 module.exports = {
   /**
@@ -41,10 +41,45 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
+    // kovan: {
+    //   network_id: 42,
+    // },
+    // kovan: {
+    //   provider: function() {
+    //     console.log(process.env.PUBLIC_KEY)
+    //     return new HDWalletProvider(
+    //       //private keys array
+    //       //url to ethereum node
+    //     )
+    //   },
+    //   gas: 5000000,
+    //   gasPrice: 25000000000,
+    //   network_id: 42,
+    //   confirmations: 10,
+    //   timeoutBlocks: 200,
+    //   skipDryRun: true
+    // },
     kovan: {
-      network_id: 42,
-      host: 'https://kovan.infura.io/v3/84842078b09946638c03157f83405213'
+      networkCheckTimeout: 10000,
+      provider: () => {
+          console.log(secret)
+          return;
+         return new HDWalletProvider(
+           secret['mneumonic'],
+           `wss://kovan.infura.io/ws/v3/${secret['apiKey']}`
+         );
+      },
+      network_id: "42",
     },
+    // provider: new HDWalletProvider(
+    //   privateKeys,
+    //   'https://ropsten.infura.io/v3/' + process.env.INFURA_API_KEY,
+    //   0,
+    //   1,
+    // ),
+    // network_id: 3, // Ropsten's id
+    // gas: 5500000, // Ropsten has a lower block limit than mainnet
+    // skipDryRun: true,
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
