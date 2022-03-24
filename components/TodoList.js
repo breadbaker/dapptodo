@@ -37,7 +37,7 @@ export default function TodoList({ account, provider }) {
       useEffect( async () => {
         const res = await fetch(`/contracts/TodoList.json`)
         const contract = await res.json()
-        const TodoContract = Contract(contract)
+        let TodoContract = Contract(contract)
         TodoContract.setProvider(provider.provider)
         TodoContract.setNetwork(provider.provider.network)
         try {
@@ -47,16 +47,6 @@ export default function TodoList({ account, provider }) {
             loadData(list)
         } catch (err) {
             console.log('layer 1',err)
-            try {
-                const list = await TodoContract.deploy()
-                setTodoListContract(list)
-    
-                loadData(list)
-            }
-            catch (err) {
-                console.log('layer 2',err)
-            }
-
         }
 
       }, []
@@ -64,6 +54,8 @@ export default function TodoList({ account, provider }) {
     
     return (
       <div>
+        <h2>Step 2 Spend Your Crypto to Manage Your Task List</h2>
+        
         {TodoListContract &&       
             <div>
                 <h2>{`Total Todos: ${todosCount}`}</h2>
